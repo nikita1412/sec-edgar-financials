@@ -64,11 +64,11 @@ class Filing:
 
         response = GetRequest(url).response
         text = response.text
-        
+
         self.text = text
 
         print('Processing SGML at '+url)
-        
+
         dtd = DTD()
         sgml = Sgml(text, dtd)
 
@@ -79,7 +79,7 @@ class Filing:
         for document_raw in sgml.map[dtd.sec_document.tag][dtd.document.tag]:
             document = Document(document_raw)
             self.documents[document.filename] = document
-        
+
         acceptance_datetime_element = sgml.map[dtd.sec_document.tag][dtd.sec_header.tag][dtd.acceptance_datetime.tag]
         acceptance_datetime_text = acceptance_datetime_element[:8] # YYYYMMDDhhmmss, the rest is junk
         # not concerned with time/timezones
@@ -127,11 +127,14 @@ class Filing:
         statement_short_names in filing_summary_xml
         '''
         statement_names = []
-
         if FILING_SUMMARY_FILE in self.documents:
             filing_summary_doc = self.documents[FILING_SUMMARY_FILE]
-            filing_summary_xml = filing_summary_doc.doc_text.xml
-
+            #filing_summary_xml = filing_summary_doc.doc_text.xml
+            try:
+                filing_summary_xml = filing_summary_doc.doc_text.xml
+            except Exception as e:
+                print("XML Not Present")
+                filing_summary_xml = filing_summary_doc.doc_text.xbrl
             for short_name in statement_short_names:
                 filename = self.get_html_file_name(filing_summary_xml, short_name)
                 if filename is not None:
@@ -142,7 +145,7 @@ class Filing:
         if len(statement_names) == 0:
             print('No financial documents could be found. Likely need to \
             update constants in edgar.filing.Statements.')
-            
+
         return statement_names
 
 
@@ -167,6 +170,7 @@ class Filing:
             short_name = short_name.get_text().lower()
             # we want to make sure it matches, up until the end of the text
             if short_name == report_short_name.lower():
+                print(report)
                 filename = report.find('htmlfilename').get_text()
                 return filename
         print(f'could not find anything for ShortName {report_short_name.lower()}')

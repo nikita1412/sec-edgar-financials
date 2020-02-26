@@ -316,13 +316,16 @@ def _process_xbrl_element(info):
         onclick="top.Show.showAR( this, 'defref_<xbrl_name>', window );"
     :return: <xbrl_name>
     '''
+#     print(info)
     # us-gaap namespace element is in the onclick of the anchor tag
     anchor = info.find('a')
-    onclick_attr = anchor.attrs['onclick']
-    # strip javascript
-    xbrl_element = onclick_attr.replace(
-        'top.Show.showAR( this, \'defref_', ''
-        ).replace('\', window );', '')
+    xbrl_element = info
+    if anchor:
+        onclick_attr = anchor.attrs['onclick']
+        # strip javascript
+        xbrl_element = onclick_attr.replace(
+            'top.Show.showAR( this, \'defref_', ''
+            ).replace('\', window );', '')
 
     return xbrl_element
 

@@ -66,16 +66,16 @@ class DTD():
                 sequence,
                 filename,
                 description,
-                doc_text
+                doc_text,xml, xbrl]
                     # ,pdf
-                    ,xml
+                    # ,xml
                     # ,xbrl
                     # ,table
                     # ,caption
                     # ,stub
                     # ,column
                     # ,footnotes_section
-    ]
+    # ]
 
     # footnotes (commented out - don't need at the moment)
     # for i in range(1,99):
@@ -112,6 +112,3 @@ class DTD():
                 children += [tag]
 
         return children
-
-
-
